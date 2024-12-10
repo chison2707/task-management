@@ -115,15 +115,33 @@ module.exports.changeMulti = async (req, res) => {
     }
 };
 
-// [PATCH]/api/v1/tasks/create
+// [POST]/api/v1/tasks/create
 module.exports.create = async (req, res) => {
     try {
         const task = new Task(req.body);
         const data = await task.save();
         res.json({
             code: 200,
-            message: "Update status thành công",
+            message: "Tạo thành công",
             data: data
+        });
+    } catch (error) {
+        res.json({
+            code: 404,
+            message: "Không tồn tại!"
+        });
+    }
+};
+
+// [PATCH]/api/v1/tasks/edit/:id
+module.exports.edit = async (req, res) => {
+    try {
+        const id = req.params.id;
+        await Task.updateOne({ _id: id }, req.body);
+
+        res.json({
+            code: 200,
+            message: "Cập nhật thành công"
         });
     } catch (error) {
         res.json({
