@@ -4,7 +4,7 @@ const ForgotPassword = require("../models/forgot-password.model");
 const generateHelper = require("../../../helper/generate");
 const sendMailHelper = require("../../../helper/sendMail");
 
-// [GET]/api/v1/users/register
+// [POST]/api/v1/users/register
 module.exports.register = async (req, res) => {
     req.body.password = md5(req.body.password);
 
@@ -35,7 +35,7 @@ module.exports.register = async (req, res) => {
     }
 };
 
-// [GET]/api/v1/users/login
+// [POST]/api/v1/users/login
 module.exports.login = async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
@@ -71,7 +71,7 @@ module.exports.login = async (req, res) => {
     });
 };
 
-// [GET]/api/v1/users/password/forgot
+// [POST]/api/v1/users/password/forgot
 module.exports.forgotPassword = async (req, res) => {
     const email = req.body.email;
     const user = await User.findOne({
@@ -112,7 +112,7 @@ module.exports.forgotPassword = async (req, res) => {
     });
 };
 
-// [GET]/api/v1/users/password/otp
+// [POST]/api/v1/users/password/otp
 module.exports.otpPassword = async (req, res) => {
     const email = req.body.email;
     const otp = req.body.otp;
@@ -141,5 +141,34 @@ module.exports.otpPassword = async (req, res) => {
         code: 200,
         message: "Xác thực thành công!",
         token: token
+    });
+};
+
+// [POST]/api/v1/users/password/reset
+module.exports.resetPassword = async (req, res) => {
+    const token = req.body.token;
+    const password = req.body.password;
+
+    const user = await User.findOne({
+        token: token
+    });
+
+    if (md5(password) === user.password) {
+        res.json({
+            code: 400,
+            message: "Mật khẩu đã tồn tại"
+        });
+        return;
+    }
+
+    await User.updateOne({
+        token: token
+    }, {
+        password: md5(password)
+    });
+
+    res.json({
+        code: 200,
+        message: "Đặt lại mật khẩu thành công"
     });
 };
