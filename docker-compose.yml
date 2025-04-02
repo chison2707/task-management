@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo # Dùng image MongoDB chính thức
+    restart: always # Luôn khởi động lại nếu bị lỗi
+    ports:
+      - "27017:27017" # Map cổng MongoDB
+    volumes:
+      - mongodb_data:/data/db # Lưu trữ dữ liệu để không bị mất khi tắt container
+
+  app:
+    build: . # Build từ Dockerfile trong thư mục hiện tại
+    ports:
+      - "3000:3000" # Map cổng cho API
+    depends_on:
+      - mongo # Đảm bảo MongoDB chạy trước khi API khởi động
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app # Đồng bộ code vào container
+      - /app/node_modules # Tránh ghi đè node_modules khi mount code
+
+volumes:
+  mongodb_data: # Định nghĩa volume lưu trữ MongoDB
