@@ -17,6 +17,7 @@ services:
       - mongo # Đảm bảo MongoDB chạy trước khi API khởi động
     environment:
       - NODE_ENV=development
+      - MONGO_URI=mongodb+srv://chiphansonzz17:Phanchisonzz_17@cluster0.pauft.mongodb.net/task-management
     volumes:
       - .:/app # Đồng bộ code vào container
       - /app/node_modules # Tránh ghi đè node_modules khi mount code
